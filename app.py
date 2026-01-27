@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request
+from flask import flash
+from flask_wtf.csrf import CSRFProtect
+
+import forms
 
 app = Flask(__name__)
+app.secret_key='clave secreta'
+csrf=CSRFProtect()
 
 @app.route("/index")
 def index():
@@ -12,9 +18,23 @@ def index():
 def alumnos():
     return render_template('alumnos.html')
 
-@app.route("/usuario")
-def usuarios():
-    return render_template('usuario.html')
+@app.route("/usuario",methods=["GET", "POST"])
+def usuario():
+    mat=0
+    nom=''
+    apa=''
+    ama=''
+    correo=''
+    usuario_class=forms.UseForm(request.form)
+    if request.method=='POST' and usuario_class.validate():
+        mat=usuario_class.matricula.data
+        nom=usuario_class.nombre.data
+        apa=usuario_class.apaterno.data
+        ama=usuario_class.amaterno.data
+        correo=usuario_class.email.data
+
+    return render_template('usuario.html',form=usuario_class,mat=mat,nom=nom,
+                           apa=apa,ama=ama,correo=correo)
 
 @app.route('/hola')
 def hola():
@@ -111,4 +131,5 @@ def resultado():
     return f"<h1>El resultado de la {op} es: {resultado}</h1>"
 
 if __name__ == '__main__':
-    app.run()
+    csrf.init_app(app)
+    app.run(debug=True)
