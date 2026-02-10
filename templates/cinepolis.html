@@ -1,0 +1,71 @@
+{% extends "layout2.html" %}
+{% block content %}
+{% import "_macros.html" as macro %}
+
+<div class="cinepolis-container">
+    <div class="logo-cinepolis">Cinepolis</div>
+
+
+    <form action="" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="row" style="color: white;">
+            <div class="col-md-6 mb-3">
+                <div class="caja-borde">
+                    <h4 class="mb-3 text-center">Entradas</h4>
+                    
+                    {{ macro.camposNuevos(form.nombre) }}
+                    {{ macro.camposNuevos(form.cant_compradores) }}
+                    {{ macro.camposNuevos(form.cant_boletas) }}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tarjeta Cineco</label>
+                        <div class="bg-light p-3 rounded">
+                            {% for subfield in form.tarjeta %}
+                                <div class="form-check" style="color: black;">
+                                    {{ subfield(class="form-check-input") }}
+                                    <label class="form-check-label" for="{{ subfield.id }}">
+                                        {{ subfield.label.text }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.tarjeta.errors %}
+                        <div style="color: #dc3545; font-size: 0.85em; margin-top: 5px;">
+                            {% for error in form.tarjeta.errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="caja-borde">
+                    <h4 class="mb-3 text-center">Salidas</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Valor a Pagar:</label>
+                        {% if total > 0 %}
+                            <input type="text" class="form-control form-control-lg text-center" 
+                                   value="${{ '%.2f'|format(total) }}" readonly>
+                        {% else %}
+                            <input type="text" class="form-control form-control-lg text-center" 
+                                   value="$0.00" readonly>
+                        {% endif %}
+                    </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <div class="caja-borde p-3" style="max-width: 400px; margin: 0 auto;">
+                    <h5 class="mb-3">Acciones</h5>
+                    <button type="submit" class="btn btn-primary me-3" style="width: 120px;">Procesar</button>
+                    <a href="/cinepolis" class="btn btn-secondary" style="width: 120px;">Limpiar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
